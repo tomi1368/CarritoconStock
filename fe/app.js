@@ -30,18 +30,29 @@ const checkStocks =  () => {
 //Cuando apreto el boton de comprar le envio al servidor el carrito con los productos y la cantidad de cada uno para que lo descuente del stock
 const payProduct = async () => {
   try {
-    const responsePay = await (await fetch("/api/pay",{
+    const preference = await (await fetch("/api/pay",{
         method: "POST",
         body: JSON.stringify(Object.values(carrito)),
         headers: {
           "Content-Type": "application/json",
         }})
     ).json();
-    lista = await responsePay //Esa respueta que viene con el stock del servidor guardo en lista para ver los productos y controlar el stock desde el front 
+    var script = document.createElement("script");
+    // The source domain must be completed according to the site for which you are integrating.
+    // For example: for Argentina ".com.ar" or for Brazil ".com.br".
+    script.src = "https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js";
+    script.type = "text/javascript";
+    script.dataset.preferenceId = preference.preferenceId;
+    script.setAttribute("data-button-label", "Pagar con Mercado Pago");
+    document.getElementById("content").innerHTML = "";
+    document.querySelector("#content").appendChild(script);
+    /* lista = await preference */ //Esa respueta que viene con el stock del servidor guardo en lista para ver los productos y controlar el stock desde el front 
+    console.log(lista);
+    console.log(preference);
   } catch (e) {
     console.error(e);
   }
-  await getData()
+  //await getData()
   emptyCart() //Una vez realizo la compra vacio el carrito y el boton lo pongo sin productos
 };
 
